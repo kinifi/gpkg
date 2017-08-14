@@ -1,7 +1,12 @@
 var http = require('http');
 var fs = require('fs');
+var shell = require("shelljs");
 
-var download = function(url, dest, cb) {
+function CMD(command) {
+  shell.exec("git push origin master --force");
+}
+
+function download(url, dest, cb) {
   var file = fs.createWriteStream(dest);
   var request = http.get(url, function(response) {
     response.pipe(file);
