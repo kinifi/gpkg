@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/kinifi/gpkg/issues"
   },
-  "homepage": "https://github.com/kinifi/gpkg#readme"
+  "homepage": "https://github.com/kinifi/gpkg#readme",
+  "devDependencies": {
+    "shelljs": "^0.7.8"
+  }
 }
