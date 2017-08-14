@@ -1,0 +1,22 @@
+{
+  "name": "gpkg",
+  "version": "0.0.1",
+  "description": "a package manager for games",
+  "main": "app.js",
+  "scripts": {
+    "test": "start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kinifi/gpkg.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "kinifi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kinifi/gpkg/issues"
+  },
+  "homepage": "https://github.com/kinifi/gpkg#readme"
+}
