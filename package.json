@@ -21,5 +21,8 @@
   "homepage": "https://github.com/kinifi/gpkg#readme",
   "devDependencies": {
     "shelljs": "^0.7.8"
+  },
+  "dependencies": {
+    "shelljs": "^0.7.8"
   }
 }
