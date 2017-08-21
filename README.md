@@ -3,7 +3,7 @@ a package manager for games that links to repos. Modeled after Bower, Yarn and D
 
 API:
 
-- help - outputs the commands
+- help - outputs the list of commands
 - cache - the location of the download dependencies cache on your local machine
 - home - opens a package homepage if the URL isn't empty
 - info - displays the overall information of the package including version Number
