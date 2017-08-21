@@ -22,7 +22,7 @@ if(process.argv.length > 2)
 
   switch (process.argv[2]) {
     case "help" || "h":
-        help();
+        help(); 
         break;
     case "cache" || "c":
         break;
@@ -47,8 +47,9 @@ else {
 
 /////////////////////////////////////////////////////////////////////
 
-function help () {
   //list all the commands
+function help () {
+
   console.log('\n gpkg <input> [options] \n');
   console.log('       help - outputs the list of commands');
   console.log('       cache - the location of the dependencies cache on your local machine');

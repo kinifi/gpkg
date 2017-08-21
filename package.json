@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/kinifi/gpkg#readme",
   "devDependencies": {
+    "pkg": "^4.2.4",
     "shelljs": "^0.7.8"
   },
   "dependencies": {
