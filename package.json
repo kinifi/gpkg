@@ -4,7 +4,7 @@
   "description": "a package manager for games",
   "main": "app.js",
   "scripts": {
-    "test": "start"
+    "test": "app.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "jsonfile": "^3.0.1",
+    "redis": "^2.8.0",
     "shelljs": "^0.7.8"
   }
 }

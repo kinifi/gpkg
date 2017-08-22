@@ -9,6 +9,49 @@ var shell = require('shelljs');
 var colors = require('colors');
 var jsonfile = require('jsonfile')
 
+//redis object
+var redis = require('redis');
+var client;
+
+/////////////////////// redis callbacks
+
+
+
+//call to connect to the server and use the client class level variable
+//only do this when using commands that need to connect to the server
+function connectToRedisServer()
+{
+  // //change to env variable
+  client = redis.createClient("6379", "localhost");
+  // //we need to send it our password
+  // //change to env variable later
+  // client.auth(PASSWORD);
+  //called when the client successfully connects
+  client.on('connect', function() {
+      console.log('connected'.green);
+
+      //do something here
+
+  });
+
+  //called when client gets an error
+  client.on("error", function (err) {
+      console.log("Error " + err);
+  });
+
+  client.on("end", function (err) {
+      console.log("Connection Ended".red);
+  });
+}
+
+function testDBConnection()
+{
+  connectToRedisServer();
+  client.quit();
+}
+
+/////////////////////////////////////////////////
+
 //get the config file
 //The config file is used for companies to specify their own database IPs
 var configFile;
@@ -52,6 +95,8 @@ function readArgs()
       case "info":
           break;
       case "install":
+          //check if the next parameter is -c or -cache for installing at the cache location
+          //not at the current process
           break;
       case "list":
           break;
@@ -62,8 +107,12 @@ function readArgs()
       case "update":
           break;
       case "uninstall":
+          //find the gpkg.json file and remove the name dependency
           break;
       case "unregister":
+          break;
+      case "testdb":
+          testDBConnection();
           break;
       case "version":
           console.log("v: " + versionNumber);
@@ -125,10 +174,15 @@ function help () {
 
 }
 
+
 //fun the command given
-function CMD(command) {
+function RunExternal(command) {
   //example:  shell.exec("git push origin master --force");
-  shell.exec(command);
+  exec(command, function(code, stdout, stderr) {
+    shell.echo('Exit code:', code);
+    shell.echo('output:', stdout);
+    shell.echo('stderr:', stderr);
+  });
 }
 
 function writeConfig()
