@@ -7,45 +7,103 @@ var http = require('http');
 var fs = require('fs');
 var shell = require('shelljs');
 var colors = require('colors');
+var jsonfile = require('jsonfile')
+
+//get the config file
+//The config file is used for companies to specify their own database IPs
+var configFile;
+//the static version number
+var versionNumber = "0.0.1";
+
+//read the config file immedately
+readConfig();
+
 
 /////////////////////////////////////////////////////////////////////
 
 var locationOfProcess;
 
-//check to see if we should process anything
-if(process.argv.length > 2)
+function readArgs()
 {
-  //set locationOfProcess
-  locationOfProcess = process.argv[1];
-  console.log(process.argv[2]);
 
+  //check to see if we should process anything
+  if(process.argv.length > 2)
+  {
+    //set locationOfProcess
+    locationOfProcess = process.argv[1];
+    // console.log(process.argv[2]);
 
-  switch (process.argv[2]) {
-    case "help" || "h":
-        help(); 
-        break;
-    case "cache" || "c":
-        break;
-    case "home" || "ho":
-        break;
-    case "info" || "i":
-        break;
-    case "install" || "in":
-        break;
-    case "list" || "li":
-        break;
-    case "login" || "lo":
-        break;
+    //check what our command is
+    switch (process.argv[2]) {
+      case "help":
+          //show the commands avalible
+          help();
+          break;
+      case "cache":
+          //take the next arg after cachelocation and store it
+          cachelocation();
+          break;
+      case "cachelocation":
+          //log the cachelocation
+          console.log("cache location: " + configFile.cachelocation.green);
+          break;
+      case "home":
+          break;
+      case "info":
+          break;
+      case "install":
+          break;
+      case "list":
+          break;
+      case "login":
+          break;
+      case "register":
+          break;
+      case "update":
+          break;
+      case "uninstall":
+          break;
+      case "unregister":
+          break;
+      case "version":
+          console.log("v: " + versionNumber);
+          break;
+  }
+
+    // console.log(process.argv);
+  }
+  else {
+    //run help command
+    console.log("\n Error: Command Not Found");
+    help();
+  }
+
 }
-
-  // console.log(process.argv);
-}
-else {
-  //run help command
-}
-
 
 /////////////////////////////////////////////////////////////////////
+
+function cachelocation () {
+  //get the next arg
+  var location = process.argv[3];
+
+  if (location != undefined || location != null || location != "") {
+    //check if directory exists
+    if (fs.existsSync(location)) {
+
+      //write to the json file
+      configFile.cachelocation = location;
+      //write to the config file
+      writeConfig();
+    }
+    else {
+      console.log("Not A Folder Path");
+      return;
+    }
+  }
+  else {
+    console.log("Not A Folder Path");
+  }
+}
 
   //list all the commands
 function help () {
@@ -73,27 +131,27 @@ function CMD(command) {
   shell.exec(command);
 }
 
+function writeConfig()
+{
+  //configFile Object to add
+  var obj = configFile;
+  jsonfile.writeFile("../config.json", obj, {spaces: 4}, function (err) {
+    console.log("Saved Config")
+  });
+}
 
-    // var child = exec('some_long_running_process', {async:true});
-    //
-    // child.stdout.on('data', function(data) {
-    //   /* ... do something with data ... */
-    // });
-    //
-    // exec('some_long_running_process', function(code, stdout, stderr) {
-    //   console.log('Exit code:', code);
-    //   console.log('Program output:', stdout);
-    //   console.log('Program stderr:', stderr);
-    // });
-
-//
-// //download a file from the given url
-// function download(url, dest, cb) {
-//   var file = fs.createWriteStream(dest);
-//   var request = http.get(url, function(response) {
-//     response.pipe(file);
-//     file.on('finish', function() {
-//       file.close(cb);
-//     });
-//   });
-// }
+function readConfig()
+{
+  if (!fs.existsSync("../config.json")) {
+    //TODO: create config file here
+    console.log("config.json file next to executible does not exist");
+    return;
+  }
+  //read the json file
+  jsonfile.readFile("../config.json", function(err, obj) {
+    //set to our class level variable
+    configFile = obj;
+    //our file is loaded now we can read the args
+    readArgs();
+  });
+}

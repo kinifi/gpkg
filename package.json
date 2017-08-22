@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "colors": "^1.1.2",
+    "jsonfile": "^3.0.1",
     "shelljs": "^0.7.8"
   }
 }
