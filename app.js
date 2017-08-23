@@ -7,7 +7,8 @@ var http = require('http');
 var fs = require('fs');
 var shell = require('shelljs');
 var colors = require('colors');
-var jsonfile = require('jsonfile')
+var jsonfile = require('jsonfile');
+var prompt = require('prompt');
 
 //redis object
 var redis = require('redis');
@@ -19,7 +20,8 @@ var client;
 
 //call to connect to the server and use the client class level variable
 //only do this when using commands that need to connect to the server
-function connectToRedisServer()
+// fun = the function we are going to call
+function connectToRedisServer(fun)
 {
   // //change to env variable
   client = redis.createClient("6379", "localhost");
@@ -29,9 +31,11 @@ function connectToRedisServer()
   //called when the client successfully connects
   client.on('connect', function() {
       console.log('connected'.green);
-
-      //do something here
-
+      //check if we passed a function or not
+      if(fun != null) {
+        //call the passed function
+        fun();
+      }
   });
 
   //called when client gets an error
@@ -58,14 +62,17 @@ var configFile;
 //the static version number
 var versionNumber = "0.0.1";
 
+//Step 1
 //read the config file immedately
 readConfig();
 
 
 /////////////////////////////////////////////////////////////////////
 
+//the location of the process so we can add repos to the current location
 var locationOfProcess;
 
+//read the arguments
 function readArgs()
 {
 
@@ -103,6 +110,8 @@ function readArgs()
       case "login":
           break;
       case "register":
+          //prompt the user with questions so they can add repo info to the database
+          register();
           break;
       case "update":
           break;
@@ -131,6 +140,84 @@ function readArgs()
 
 /////////////////////////////////////////////////////////////////////
 
+//register a repo with a database
+function register () {
+
+  //the schema for the questions needed in the database
+  var schema = {
+    properties: {
+      name: {
+        pattern: /^[a-zA-Z\s\-]+$/,
+        message: 'Name must be only letters, spaces, or dashes',
+        required: true
+      },
+      password: {
+        message: 'Does this package need a password? [Leave Blank If No]',
+        hidden: true
+      },
+      repourl: {
+        message: 'Repository URL or SSH. This will be the command run by gpkg.'
+      },
+      command: {
+        message: 'What is the command to run to download this package? [Example: git clone GITURLHERE]'
+      },
+      summary: {
+        message: 'Give a small 150 character summary on the package.'
+      }
+    }
+  };
+
+  // Start the prompt
+  prompt.start();
+
+  // Get two properties from the user: email, password
+  prompt.get(schema, function (err, result) {
+
+    //send the values from the prompt to the method that will send it to the database
+    sendNewPackageInfo(result.name, result.password, result.repourl, result.command, result.summary);
+
+  });
+
+
+
+}
+
+function sendNewPackageInfo(name, password, repourl, command, summary)
+{
+  //sending a function to test
+  connectToRedisServer(function(){
+
+    //check if packagename exists already
+    client.exists(name, function(err, reply) {
+      if (reply === 1) {
+          console.log(name + ' exists already.');
+          //disconnect the connection with the database
+          client.quit();
+      } else if(reply == 0) {
+        //add the package and its details
+        client.hmset(name, {
+          'password': '',
+          'repourl': repourl,
+          'command': command,
+          'summary': summary
+        });
+
+        console.log("Added To Database");
+
+        client.quit();
+      }
+      else {
+        //we have an error
+        console.log("Error: " + err);
+        client.quit();
+        return;
+      }
+    });
+
+  });
+}
+
+//set the cache location
 function cachelocation () {
   //get the next arg
   var location = process.argv[3];
@@ -206,6 +293,7 @@ function readConfig()
     //set to our class level variable
     configFile = obj;
     //our file is loaded now we can read the args
+    //Step 2
     readArgs();
   });
 }

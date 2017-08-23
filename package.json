@@ -26,6 +26,7 @@
   "dependencies": {
     "colors": "^1.1.2",
     "jsonfile": "^3.0.1",
+    "prompt": "^1.0.0",
     "redis": "^2.8.0",
     "shelljs": "^0.7.8"
   }
