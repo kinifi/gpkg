@@ -14,45 +14,6 @@ var prompt = require('prompt');
 var redis = require('redis');
 var client;
 
-/////////////////////// redis callbacks
-
-
-
-//call to connect to the server and use the client class level variable
-//only do this when using commands that need to connect to the server
-// fun = the function we are going to call
-function connectToRedisServer(fun)
-{
-  // //change to env variable
-  client = redis.createClient("6379", "localhost");
-  // //we need to send it our password
-  // //change to env variable later
-  // client.auth(PASSWORD);
-  //called when the client successfully connects
-  client.on('connect', function() {
-      console.log('connected'.green);
-      //check if we passed a function or not
-      if(fun != null) {
-        //call the passed function
-        fun();
-      }
-  });
-
-  //called when client gets an error
-  client.on("error", function (err) {
-      console.log("Error " + err);
-  });
-
-  client.on("end", function (err) {
-      console.log("Connection Ended".red);
-  });
-}
-
-function testDBConnection()
-{
-  connectToRedisServer();
-  client.quit();
-}
 
 /////////////////////////////////////////////////
 
@@ -139,6 +100,44 @@ function readArgs()
 }
 
 /////////////////////////////////////////////////////////////////////
+
+
+//call to connect to the server and use the client class level variable
+//only do this when using commands that need to connect to the server
+// fun = the function we are going to call
+function connectToRedisServer(fun)
+{
+  // //change to env variable
+  client = redis.createClient(configFile.port, configFile.ipaddress);
+  // //we need to send it our password
+  // //change to env variable later
+  // client.auth(PASSWORD);
+  //called when the client successfully connects
+  client.on('connect', function() {
+      console.log('connected'.green);
+      //check if we passed a function or not
+      if(fun != null) {
+        //call the passed function
+        fun();
+      }
+  });
+
+  //called when client gets an error
+  client.on("error", function (err) {
+      console.log("Error " + err);
+  });
+
+  client.on("end", function (err) {
+      console.log("Connection Ended".red);
+  });
+}
+
+function testDBConnection()
+{
+  connectToRedisServer();
+  client.quit();
+}
+
 
 //register a repo with a database
 function register () {
