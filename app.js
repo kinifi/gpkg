@@ -63,8 +63,7 @@ function readArgs()
       case "info":
           break;
       case "install":
-          //check if the next parameter is -c or -cache for installing at the cache location
-          //not at the current process
+          install();
           break;
       case "list":
           break;
@@ -100,6 +99,54 @@ function readArgs()
 }
 
 /////////////////////////////////////////////////////////////////////
+
+function install()
+{
+  connectToRedisServer(function() {
+    //get the package name
+    var packageName = process.argv[3];
+    client.hgetall(packageName, function(err, object) {
+      console.log(object.command);
+    });
+    // // check if the package exists at all
+    // client.get(packageName, function(err, reply) {
+    //     if(err || data === null) {
+    //       console.log("err or null! ");
+    //       console.log(err);
+    //     } else {
+    //         return data;
+    //     }
+    //   // if (reply === 1) {
+    //   //     //package exists!
+    //   //     console.log('exists');
+    //   // } else if(reply == 0) {
+    //   //     console.log("Package Name: ".red + packageName + " Does Not Exist In DB.".red);
+    //   //     client.quit();
+    //   //     return;
+    //   // } else {
+    //   //   console.log(err);
+    //   //   client.quit();
+    //   //   return;
+    //   // }
+    // });
+  });
+
+
+
+    // //check if the next parameter is -c or -cache for installing at the cache location
+    // var cacheParameter = process.argv[4];
+    // if (cacheParameter == "--cache" || cacheParameter == "-c") {
+    //   //check if the user has specificed a cache location
+    //   if (fs.existsSync(configFile.cachelocation)) {
+    //     //cache location exists. call git command to that location and not the location we are in
+    //
+    //   } else {
+    //     //log that the cache location doesn't exist or wasn't set properly
+    //     console.log("cache location is not set properly: " + configFile.cachelocation " was taken from the config file.");
+    //     client.quit();
+    //   }
+    // }
+}
 
 
 //call to connect to the server and use the client class level variable
