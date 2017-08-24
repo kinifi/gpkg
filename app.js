@@ -61,6 +61,7 @@ function readArgs()
       case "home":
           break;
       case "info":
+          info();
           break;
       case "install":
           install();
@@ -148,6 +149,20 @@ function install()
     // }
 }
 
+function info()
+{
+  connectToRedisServer(function() {
+    //get the package name
+    var packageName = process.argv[3];
+    client.hgetall(packageName, function(err, object) {
+      console.log("Package Name: " + object.name +
+                  "\n Summary: " + object.summary);
+      client.quit();
+    });
+  });
+
+}
+
 
 //call to connect to the server and use the client class level variable
 //only do this when using commands that need to connect to the server
@@ -161,7 +176,7 @@ function connectToRedisServer(fun)
   // client.auth(PASSWORD);
   //called when the client successfully connects
   client.on('connect', function() {
-      console.log('connected'.green);
+      console.log('DB Connected'.green);
       //check if we passed a function or not
       if(fun != null) {
         //call the passed function
@@ -242,6 +257,7 @@ function sendNewPackageInfo(name, password, repourl, command, summary)
       } else if(reply == 0) {
         //add the package and its details
         client.hmset(name, {
+          'name': name,
           'password': '',
           'repourl': repourl,
           'command': command,
