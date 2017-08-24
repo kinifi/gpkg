@@ -298,16 +298,9 @@ function help () {
 
   console.log('\n gpkg <input> [options] \n');
   console.log('       help - outputs the list of commands');
-  console.log('       cache - the location of the dependencies cache on your local machine');
-  console.log('       home - opens a package homepage if the URL is not empty');
   console.log('       info - outputs the gpkg.json file');
-  console.log('       init - creates a gpkg.json file');
   console.log('       install - installs all dependencies listed in the gpkg.json file');
-  console.log('       list - lists packages and attempts to check if newer versions exist');
-  console.log('       login - authenticate to register packages');
   console.log('       register - registers a package');
-  console.log('       update - updates all the installed packages');
-  console.log('       uninstall - uninstalls a package');
   console.log('       unregister - unregisters a package with the database');
   console.log('       version - checks the gpkg version \n');
 
