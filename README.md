@@ -1,22 +1,39 @@
 # gpkg
-a package manager for games that links to repos. Modeled after Bower, Yarn and Dep
+a package manager that is more of a list of commands with a name. There is no need to host packages or do what Github already does. Onboarding new employees, or downloading repositories for people that aren't keen on command line can be simple as:
+
+```
+gpkg install newemployee
+```
+
+On the Database the newemployee package has the following information:
+
+- name: newemployee
+- password: empty (no one added password when it was created)
+- repourl: ssh://repourlgoeshere
+- command: git clone ssh://repourlgoeshere
+- summary: "Downloads the tools and information needed for new developers on Project X"
+
+-----
+
+Just register a package with:
+
+```
+gpkg register
+```
+
+It will Prompt you with questions about the Name, Command To Run, Summary of what it does, and repourl if you are pulling a repository.
+
+
+
+
 
 API:
 
 - help - outputs the list of commands
-- cache - the location of the download dependencies cache on your local machine
-- home - opens a package homepage if the URL isn't empty
 - info - displays the overall information of the package including version Number
-- init - creates a gpkg.json file
-- install - installs all dependencies listed in the gpkg.json file
-  - force-latest - force the latest version on conflict
-  - side - makes a folder with the newest version along side the old one to deal with manually
-- list - lists packages in the gpkg.json file and attempts to check if newer versions exist
-- login - authenticate with github and store credientials so we can use to register packages
+- install - installs the command from the DB of that package name
 - register - registers a package with the database by checking to see if a gpkg exists with that name, if no, send gpkg.json file to server
-- update - updates all the installed packages to the newest version according to their version numbers in the gpkg.json file
-  - force-latest - force the latest version on conflict
-  - side - makes a folder with the newest version along side the old one to deal with manually
 - uninstall - uninstalls a package from the gpkg.json file and the location its installed
 - unregister - unregisters a package with the database
+- testdb - used to test the database connection taken from the config file
 - version - checks the gpkg version

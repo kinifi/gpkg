@@ -50,34 +50,15 @@ function readArgs()
           //show the commands avalible
           help();
           break;
-      case "cache":
-          //take the next arg after cachelocation and store it
-          cachelocation();
-          break;
-      case "cachelocation":
-          //log the cachelocation
-          console.log("cache location: " + configFile.cachelocation.green);
-          break;
-      case "home":
-          break;
       case "info":
           info();
           break;
       case "install":
           install();
           break;
-      case "list":
-          break;
-      case "login":
-          break;
       case "register":
           //prompt the user with questions so they can add repo info to the database
           register();
-          break;
-      case "update":
-          break;
-      case "uninstall":
-          //find the gpkg.json file and remove the name dependency
           break;
       case "unregister":
           break;
@@ -104,59 +85,64 @@ function readArgs()
 function install()
 {
   connectToRedisServer(function() {
+
+    //do to check we have a password
+    //prompt the user for a password if we have one
+
     //get the package name
     var packageName = process.argv[3];
     client.hgetall(packageName, function(err, object) {
-      console.log(object.command);
+
+      //check if we have a password:
+      if(object.password != "")
+      {
+        //we have a password so prompt the user
+        //the schema for the questions needed in the database
+        var schema = {
+          properties: {
+            password: {
+              message: 'Password:',
+              hidden: true
+            }
+          }
+        }
+
+        // Start the prompt
+        prompt.start();
+
+        // Get two properties from the user: email, password
+        prompt.get(schema, function (err, result) {
+          if(result.password == object.password)
+          {
+            console.log("Password Correct. Running Command From Package".green);
+            runExternal(object.command);
+          }
+          else {
+            console.log("Incorrect Password".red);
+          }
+        });
+
+      } else {
+        //we dont have a password so run the command
+        runExternal(object.command);
+
+      }
+
+      //we dont need the DB anymore so disconnect
+      client.quit();
     });
-    // // check if the package exists at all
-    // client.get(packageName, function(err, reply) {
-    //     if(err || data === null) {
-    //       console.log("err or null! ");
-    //       console.log(err);
-    //     } else {
-    //         return data;
-    //     }
-    //   // if (reply === 1) {
-    //   //     //package exists!
-    //   //     console.log('exists');
-    //   // } else if(reply == 0) {
-    //   //     console.log("Package Name: ".red + packageName + " Does Not Exist In DB.".red);
-    //   //     client.quit();
-    //   //     return;
-    //   // } else {
-    //   //   console.log(err);
-    //   //   client.quit();
-    //   //   return;
-    //   // }
-    // });
   });
 
-
-
-    // //check if the next parameter is -c or -cache for installing at the cache location
-    // var cacheParameter = process.argv[4];
-    // if (cacheParameter == "--cache" || cacheParameter == "-c") {
-    //   //check if the user has specificed a cache location
-    //   if (fs.existsSync(configFile.cachelocation)) {
-    //     //cache location exists. call git command to that location and not the location we are in
-    //
-    //   } else {
-    //     //log that the cache location doesn't exist or wasn't set properly
-    //     console.log("cache location is not set properly: " + configFile.cachelocation " was taken from the config file.");
-    //     client.quit();
-    //   }
-    // }
 }
 
+//outputs all the information of a package
 function info()
 {
   connectToRedisServer(function() {
     //get the package name
     var packageName = process.argv[3];
     client.hgetall(packageName, function(err, object) {
-      console.log("Package Name: " + object.name +
-                  "\n Summary: " + object.summary);
+      console.log(object);
       client.quit();
     });
   });
@@ -171,12 +157,16 @@ function connectToRedisServer(fun)
 {
   // //change to env variable
   client = redis.createClient(configFile.port, configFile.ipaddress);
+
   // //we need to send it our password
-  // //change to env variable later
-  // client.auth(PASSWORD);
+  if (configFile.password != "null")
+  {
+    client.auth(configFile.password);
+  }
+
   //called when the client successfully connects
   client.on('connect', function() {
-      console.log('DB Connected'.green);
+      console.log('DB Connected \n'.green);
       //check if we passed a function or not
       if(fun != null) {
         //call the passed function
@@ -190,7 +180,7 @@ function connectToRedisServer(fun)
   });
 
   client.on("end", function (err) {
-      console.log("Connection Ended".red);
+      console.log("DB Connection Ended \n".red);
   });
 }
 
@@ -325,12 +315,17 @@ function help () {
 
 
 //fun the command given
-function RunExternal(command) {
+function runExternal(command) {
+
+  console.log("Running Command \n".inverse);
   //example:  shell.exec("git push origin master --force");
-  exec(command, function(code, stdout, stderr) {
-    shell.echo('Exit code:', code);
+  shell.exec(command, function(code, stdout, stderr) {
+    //log the output
     shell.echo('output:', stdout);
-    shell.echo('stderr:', stderr);
+    //log the error if we have one
+    if(stderr) {
+      console.log(stderr);
+    }
   });
 }
 
