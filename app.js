@@ -61,6 +61,7 @@ function readArgs()
           register();
           break;
       case "unregister":
+          unregister();
           break;
       case "testdb":
           testDBConnection();
@@ -81,6 +82,53 @@ function readArgs()
 }
 
 /////////////////////////////////////////////////////////////////////
+
+function unregister () {
+  connectToRedisServer(function() {
+
+    //get the package name
+    var packageName = process.argv[3];
+    //download the package name
+    client.hgetall(packageName, function(err, object) {
+
+      //we have a password so prompt the user
+      //the schema for the questions needed in the database
+      var schema = {
+        properties: {
+          decision: {
+            message: 'Are you sure? [yes|no]'
+          }
+        }
+      }
+
+      // Start the prompt
+      prompt.start();
+
+      // Get two properties from the user: email, password
+      prompt.get(schema, function (err, result) {
+        if(result.decision == "yes" || result.decision == "y")
+        {
+          console.log("Deleting :" + packageName + " from the DB.");
+          //delete the package from the database
+          client.del(packageName, function(err, reply) {
+            if(reply == 1) {
+                console.log("Deleted Package from DB");
+            }
+            else {
+              console.log("Error Occured");
+            }
+
+            client.quit();
+          });
+        }
+        else {
+          console.log("Incorrect command".red);
+          client.quit();
+        }
+      });
+    });
+  });
+}
 
 function install()
 {
