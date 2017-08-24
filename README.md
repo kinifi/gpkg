@@ -1,6 +1,6 @@
 # gpkg
 
-![gpkg Logo](http://i.imgur.com/hLPkmk2.png)
+![gpkg Logo](http://i.imgur.com/iS6Irsw.png)
 
 a package manager that is more of a list of commands with a name. Onboarding new employees, or downloading repositories for people that aren't keen on command line can be simple as:
 
