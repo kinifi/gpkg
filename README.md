@@ -1,5 +1,6 @@
 # gpkg
-a package manager that is more of a list of commands with a name. There is no need to host packages or do what Github already does. Onboarding new employees, or downloading repositories for people that aren't keen on command line can be simple as:
+
+a package manager that is more of a list of commands with a name. Onboarding new employees, or downloading repositories for people that aren't keen on command line can be simple as:
 
 ```
 gpkg install newemployee
@@ -13,6 +14,7 @@ On the Database the newemployee package has the following information:
 - command: git clone ssh://repourlgoeshere
 - summary: "Downloads the tools and information needed for new developers on Project X"
 
+
 -----
 
 Just register a package with:
@@ -24,7 +26,7 @@ gpkg register
 It will Prompt you with questions about the Name, Command To Run, Summary of what it does, and repourl if you are pulling a repository.
 
 
-
+----
 
 
 API:
