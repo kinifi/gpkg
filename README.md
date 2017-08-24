@@ -34,7 +34,7 @@ API:
 - help - outputs the list of commands
 - info - displays the overall information of the package including version Number
 - install - installs the command from the DB of that package name
-- register - registers a package with the database by checking to see if a gpkg exists with that name, if no, send gpkg.json file to server
+- register - registers a package with the database
 - uninstall - uninstalls a package from the gpkg.json file and the location its installed
 - unregister - unregisters a package with the database
 - testdb - used to test the database connection taken from the config file
